@@ -9,7 +9,6 @@ public class PlayerControllerX : MonoBehaviour
     public float floatForce;
     public float maxYForPush;
     public float maxSpeedForPush;
-    private float limitingFactor = 1f;
     private float gravityModifier = 1.5f;
     private Rigidbody playerRb;
 
@@ -38,13 +37,12 @@ public class PlayerControllerX : MonoBehaviour
     {       
         // While space is pressed and player is low enough, float up
         bool isTooHigh = transform.position.y > maxYForPush;
-        bool isRisingTooFast = playerRb.linearVelocity.y > maxSpeedForPush;
+        float speedFactor = Mathf.Clamp01(playerRb.linearVelocity.y / maxSpeedForPush);
         if (!isTooHigh 
-            && !isRisingTooFast
             && Input.GetKey(KeyCode.Space) 
             && !gameOver)
         {            
-            playerRb.AddForce(Vector3.up * floatForce * limitingFactor);
+            playerRb.AddForce(Vector3.up * floatForce * (1.0f - speedFactor));
         }
     }
 
