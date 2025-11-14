@@ -7,6 +7,9 @@ public class PlayerControllerX : MonoBehaviour
     public bool gameOver;
 
     public float floatForce;
+    public float maxYForPush;
+    public float maxSpeedForPush;
+    private float limitingFactor = 1f;
     private float gravityModifier = 1.5f;
     private Rigidbody playerRb;
 
@@ -32,11 +35,16 @@ public class PlayerControllerX : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {       
         // While space is pressed and player is low enough, float up
-        if (Input.GetKey(KeyCode.Space) && !gameOver)
-        {
-            playerRb.AddForce(Vector3.up * floatForce);
+        bool isTooHigh = transform.position.y > maxYForPush;
+        bool isRisingTooFast = playerRb.linearVelocity.y > maxSpeedForPush;
+        if (!isTooHigh 
+            && !isRisingTooFast
+            && Input.GetKey(KeyCode.Space) 
+            && !gameOver)
+        {            
+            playerRb.AddForce(Vector3.up * floatForce * limitingFactor);
         }
     }
 
@@ -58,7 +66,6 @@ public class PlayerControllerX : MonoBehaviour
             fireworksParticle.Play();
             playerAudio.PlayOneShot(moneySound, 1.0f);
             Destroy(other.gameObject);
-
         }
 
     }
